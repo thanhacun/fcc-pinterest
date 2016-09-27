@@ -21,11 +21,11 @@ const renderHelper = (res, location, routes, store) => {
       );
       const finalState = store.getState();
       res.send(`
-      <!doctype html>
+      <!DOCTYPE html>
       <html>
         <head>
           <title>Clementine-React-Redux</title>
-          <link rel="stylesheet" href="/static/style.css" media="all">
+          <link rel="stylesheet" type="text/css" href="/static/style.css" media="all">
         </head>
         <body>
           <div id="appView">${html}</div>

@@ -1,3 +1,5 @@
+console.log("Webpack dev loaded!");
+
 var path = require('path');
 var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -50,6 +52,7 @@ module.exports = {
     }, {
       test: /\.(eot|woff|woff2|ttf|svg|png|jpg)$/,
       loader: 'file-loader?name=[name].[ext]'
-    }]
+    }
+    ]
   }
 };

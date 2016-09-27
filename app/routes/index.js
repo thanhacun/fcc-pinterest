@@ -1,4 +1,3 @@
-
 import ClickHandler from '../controllers/clickHandler.server';
 import serverRender from '../serverRender.js';
 

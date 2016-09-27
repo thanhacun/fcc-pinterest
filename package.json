@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "start": "node server.js",
-    "serve": "nodemon server.js --exec babel-node ",
+    "serve": "NODE_ENV=development nodemon server.js --exec babel-node ",
     "build": "make build",
     "lint": "eslint --ext .js --ext .jsx ./app ./client/src"
   },
