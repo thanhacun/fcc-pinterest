@@ -8,4 +8,8 @@ module.exports = {
     consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
     callbackURL: `${process.env.APP_URL}auth/twitter/callback`,
   },
+  
+  githubAuth : {
+    
+  }
 };

@@ -1,4 +1,5 @@
 import ClickHandler from '../controllers/clickHandler.server';
+import ImageHandler from '../controllers/imageHandler.server';
 import serverRender from '../serverRender.js';
 
 export default function (app, passport) {
@@ -10,6 +11,7 @@ export default function (app, passport) {
   }
 
   const clickHandler = new ClickHandler();
+  const imageHandler = new ImageHandler();
 
   app.route('/api/user')
     .get((req, res) => {
@@ -31,14 +33,17 @@ export default function (app, passport) {
   app.route('/logout')
     .get((req, res) => {
       req.logout();
-      res.redirect('/login');
+      res.redirect('/');
     });
 
   app.route('/api/user/clicks')
 		.get(isLoggedIn, clickHandler.getClicks)
 		.post(isLoggedIn, clickHandler.addClick)
 		.delete(isLoggedIn, clickHandler.resetClicks);
-
+		
+	app.route('/api/user/images')
+	  .get(isLoggedIn, imageHandler.addOrGetImage);
+	  
   app.route('/*')
     .get(serverRender
       // (req, res) => {

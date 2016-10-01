@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import * as actionCreators from '../actions';
 
-import { getUser } from '../reducer';
+import { getUser } from '../reducers/reducer';
 import { Link } from 'react-router';
 
 const Profile = ({ user }) => (

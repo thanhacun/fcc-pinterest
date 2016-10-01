@@ -10,11 +10,11 @@ import css from '../style/main.scss';
 
 import thunk from 'redux-thunk';
 import { createStore, applyMiddleware } from 'redux';
-import reducer from './reducer';
+import reducers from './reducers';
 
 // eslint-disable-next-line no-underscore-dangle
 const initialState = window.__INITIAL_STATE__;
-const store = createStore(reducer, initialState, applyMiddleware(thunk));
+const store = createStore(reducers, initialState, applyMiddleware(thunk));
 
 const routes = createRoutes(store);
 

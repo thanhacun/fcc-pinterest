@@ -1,0 +1,40 @@
+/* ---- grid ---- */
+
+.grid {
+  margin: 0px;
+  width: 1000px;
+}
+
+/* clearfix */
+.grid:after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+/* ---- grid-item ---- */
+
+.grid-item {
+  width: 190px;
+  float: left;
+  background: #FFF;
+  padding: 5px;
+  box-shadow: 2px 2px 5px;
+  text-align: center;
+  margin-bottom: 10px
+}
+
+.grid-item--width2 { width: 320px; }
+.grid-item--width3 { width: 480px; }
+.grid-item--width4 { width: 640px; }
+
+.grid-item--height2 { height: 200px; }
+.grid-item--height3 { height: 260px; }
+.grid-item--height4 { height: 360px; }
+
+/* ---- image --- */
+.image img{
+    width: 180px;
+    vertical-align: middle;
+    border: 0;
+}

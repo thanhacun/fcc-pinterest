@@ -2,6 +2,7 @@ import React from 'react';
 import { MainContainer as Main } from './components/main.jsx';
 import Login from './components/login.jsx';
 import { ProfileContainer as Profile } from './components/profile.jsx';
+import { TestContainer as Test } from './components/test.jsx';
 
 const App = ({ children }) => (
   <div>
@@ -35,6 +36,7 @@ export const createRoutes = (store) => {
       { path: 'main', component: Main, onEnterAuth },
       { path: 'profile', component: Profile, onEnterAuth },
       { path: 'login', component: Login, onEnterUnauth },
+      { path: 'test', component: Test }
     ],
   };
 };

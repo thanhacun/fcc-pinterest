@@ -5,6 +5,14 @@ function setClicks(nClicks) {
   return { type: 'SET_CLICKS', clicks: nClicks };
 }
 
+function flip_name(name) {
+  return {type: 'FLIP_NAME', name: name};
+}
+
+function setImage(url, des) {
+  return { type: 'UPLOAD', url, des };
+}
+
 export const reset = () => (dispatch) => {
   dispatch({ type: 'LOADING', what: 'clicks' });
   ajax(
@@ -32,3 +40,20 @@ export const click = () => (dispatch) => {
   }, error => { console.log(error); });
   /* eslint-enable no-console */
 };
+
+export const thanh_click = (name) => (dispatch) => {
+  dispatch(flip_name(name));
+};
+
+export const submit = (url, des) => (dispatch) => {
+  dispatch(setImage(url, des));
+  ajax('GET', '/api/user/images?imgLink=' + url + '&imgDes=' +  des).then(() =>{
+    ajax('GET', '/api/user/images').then(data => {
+      dispatch({type: 'SET_IMAGES', images: data});
+    });
+  });
+};
+
+export const toggle = () => (dispatch) => {
+  dispatch({type: 'TOGGLE_ALL_IMAGE'});
+}
