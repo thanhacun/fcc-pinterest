@@ -32,6 +32,11 @@ const UploadForm = React.createClass({
 });
 
 const ImageItem = React.createClass({
+  defaultImage: function(ev){
+    const placeholderUrl = 'http://placehold.it/200?text=Broken image!';
+    console.log('Broken image detected!', ev.target.src);
+    ev.target.src = placeholderUrl;
+  },
   render: function(){
     const deleteButton = (<button onClick={this.props.delete.bind(null, this.props.image)} className="btn btn-danger">Delete</button>);
     //TODO:later
@@ -39,7 +44,7 @@ const ImageItem = React.createClass({
     return (
         <div className="grid-item">
           <div className="image">
-            <img src={this.props.image.imgUrl}/>
+            <img src={this.props.image.imgUrl} onError={this.defaultImage}/>
             <p>{this.props.image.imgDes}</p>
           </div>
           <div className="info">
@@ -101,7 +106,7 @@ const Main = React.createClass({
           {loggedIn ? <UploadForm handleSubmit={this.handleSubmit} ref="uploadValues"/> : null}          
         </div>
         
-        <Masonry className='' elementType={'div'} options={masonryOptions} disableImagesLoaded={false} updateOnEachImageLoad={false}>
+        <Masonry className='' elementType={'div'} options={masonryOptions} disableImagesLoaded={false} updateOnEachImageLoad={true}>
           {imagesRender}
         </Masonry>
         

@@ -73,4 +73,6 @@ export const delete_image = (image) => (dispatch) => {
       dispatch({type: 'SET_IMAGES', images: data});
     });
   });
-}; 
+};
+
+
