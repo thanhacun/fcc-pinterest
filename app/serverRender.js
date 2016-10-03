@@ -7,6 +7,10 @@ import { createRoutes } from '../client/src/routes.jsx';
 import reducers from '../client/src/reducers';
 import Users from './models/users';
 
+import ImageHandler from './controllers/imageHandler.server.js';
+
+const imageHandler = new ImageHandler();
+
 const renderHelper = (res, location, routes, store) => {
   match({ routes, location }, (error, redirectLocation, renderProps) => {
     if (error) {
@@ -47,6 +51,36 @@ const renderHelper = (res, location, routes, store) => {
 };
 
 export default (req, res) => {
+  /*TODO: Need to review
+  imageHandler.addOrGetImage(req, res, (images) => {
+    let initialState = {};
+    if (req.isAuthenticated()) {
+      initialState = {originalState: {loggedIn: true, showAll: false, user: req.user.twitter, images }, testState: {name: 'THANH'}};
+    } else {
+      initialState = {originalState: {loggedIn: false, showAll: true, images}, testState: {name: 'THANH'}};
+    }
+    const store = createStore(reducers, initialState);
+    const routes = createRoutes(store);
+    return renderHelper(res, req.url, routes, store);
+  });
+  */
+  
+  /*
+  ajax('GET', '/api/user/images').then(images =>{
+    let initialState = {};
+    if (req.isAuthenticated()) {
+      initialState = {originalState: {loggedIn: true, showAll: false, user: req.user.twitter, images }, testState: {name: 'THANH'}};
+    } else {
+      initialState = {originalState: {loggedIn: false, showAll: true, images}, testState: {name: 'THANH'}};
+    }
+    const store = createStore(reducers, initialState);
+    const routes = createRoutes(store);
+    console.log(images);
+    return renderHelper(res, req.url, routes, store);
+  });
+  */
+  
+  //TODO: DRY
   Users.find({}, (err, results) => {
     if (err) { throw err; }
     let initialState = {};

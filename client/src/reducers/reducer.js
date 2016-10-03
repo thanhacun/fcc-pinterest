@@ -36,14 +36,17 @@ const originalReducer = (state = initState, action) => {
     case 'LOADING':
       return setLoading(state, action.what);
     case 'UPLOAD':
-      //console.log('User upload an image link!', action);
+      console.log('User upload an image link!');
       return uploadImage(state);
     case 'SET_IMAGES':
-      console.log('Update images state');
+      console.log('Update images list');
       return setImages(state, action.images);
     case 'TOGGLE_ALL_IMAGE':
-      //console.log('Toggle showing all images', state);
+      console.log('Toggle showing all images');
       return {...state, showAll: !state.showAll};
+    case 'DELETE_IMAGE':
+      console.log('User delete an image link!');
+      return {...state};
     default:
       return state;
   }

@@ -31,6 +31,26 @@ const UploadForm = React.createClass({
   }
 });
 
+const ImageItem = React.createClass({
+  render: function(){
+    const deleteButton = (<button onClick={this.props.delete.bind(null, this.props.image)} className="btn btn-danger">Delete</button>);
+    //TODO:later
+    const likeBadge = (<button className="btn btn-default">L <span className="badge">{this.props.image.like}</span></button>);
+    return (
+        <div className="grid-item">
+          <div className="image">
+            <img src={this.props.image.imgUrl}/>
+            <p>{this.props.image.imgDes}</p>
+          </div>
+          <div className="info">
+            <div>{this.props.image.user}</div>
+            {(this.props.loggedIn && this.props.user.username === this.props.image.user) ? deleteButton: null}
+          </div>
+        </div>
+      );
+  }
+});
+
 const Main = React.createClass({
   handleSubmit: function() {
     let uploadValues = this.refs.uploadValues;
@@ -39,15 +59,23 @@ const Main = React.createClass({
     uploadValues.refs.img_link.value = "";
     uploadValues.refs.img_des.value = "";
   },
+  
   toggleAllImage: function() {
     this.props.toggle();
   },
   
+  handleDeleteImage: function(image) {
+    console.log('User', image.user, 'want to delete image', image._id);
+    this.props.delete_image(image);
+  },
+  
   render: function() {
+    var self= this;
     var user = this.props.user ;
     var images = this.props.images;
     var loggedIn = this.props.loggedIn;
     var showAll = this.props.showAll;
+    //var deleteImage = this.handleDeleteImage;
     var imagesRender = images.filter(function(image) {
       if (showAll) {
         //return all images except no URL
@@ -57,22 +85,12 @@ const Main = React.createClass({
         return image.user === user.username && image.imgUrl;
       }
       
-    }).map(function(image) {
-      //Using react-masonry-component
-      return (
-          <div className="grid-item" key={image._id}>
-            <div className="image">
-              <img src={image.imgUrl}/>
-              <p>{image.imgDes}</p>
-            </div>
-            <div className="info">
-              <p>{image.user}</p>
-            </div>
-          </div>
-        );
+    }).map(function(image, key) {
+      return ( <ImageItem image={image} delete={self.handleDeleteImage} loggedIn={loggedIn}  user={user} key={"item-" + key} /> );
     });
   
     return (
+      //Using react-masonry-component
       <div className="container">
         <div className="page-header">
           <h1>Pinterest like FCC, welcome <span id="display-name">{user.username}</span>!</h1>
@@ -81,14 +99,11 @@ const Main = React.createClass({
             <a className="btn btn-default" href={loggedIn ? "/logout" : "/auth/twitter"}>{loggedIn ? "Logout": "Login"}</a>
           </div>
           {loggedIn ? <UploadForm handleSubmit={this.handleSubmit} ref="uploadValues"/> : null}          
-          
         </div>
         
-        <div className="container_bak">
-          <Masonry className='' elementType={'div'} options={masonryOptions} disableImagesLoaded={false} updateOnEachImageLoad={false}>
-            {imagesRender}
-          </Masonry>
-        </div>
+        <Masonry className='' elementType={'div'} options={masonryOptions} disableImagesLoaded={false} updateOnEachImageLoad={false}>
+          {imagesRender}
+        </Masonry>
         
         
       </div>

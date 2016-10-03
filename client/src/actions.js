@@ -47,7 +47,7 @@ export const thanh_click = (name) => (dispatch) => {
 
 export const submit = (url, des) => (dispatch) => {
   dispatch(setImage(url, des));
-  ajax('GET', '/api/user/images?imgLink=' + url + '&imgDes=' +  des).then(() =>{
+  ajax('GET', '/api/user/images?action=upload&imgLink=' + url + '&imgDes=' +  des).then(() =>{
     ajax('GET', '/api/user/images').then(data => {
       dispatch({type: 'SET_IMAGES', images: data});
     });
@@ -56,4 +56,21 @@ export const submit = (url, des) => (dispatch) => {
 
 export const toggle = () => (dispatch) => {
   dispatch({type: 'TOGGLE_ALL_IMAGE'});
-}
+  ajax('GET', '/api/user/images')
+  .then(data => {
+    dispatch({type: 'SET_IMAGES', images: data});
+  })
+  .catch(error => {
+    console.log(error);
+    throw error;
+  });
+};
+
+export const delete_image = (image) => (dispatch) => {
+  dispatch({type: 'DELETE_IMAGE'});
+  ajax('GET', '/api/user/images?action=delete&username=' + image.user + '&imgId=' + image._id).then(() => {
+    ajax('GET', '/api/user/images').then(data => {
+      dispatch({type: 'SET_IMAGES', images: data});
+    });
+  });
+}; 

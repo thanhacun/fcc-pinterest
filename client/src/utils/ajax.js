@@ -1,5 +1,5 @@
 
-export default (method, url, params) => (new Promise((resolve, reject) => {
+export default (method, url) => (new Promise((resolve, reject) => {
   const xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = () => {
     if (xmlhttp.readyState === 4) {
@@ -11,5 +11,5 @@ export default (method, url, params) => (new Promise((resolve, reject) => {
     }
   };
   xmlhttp.open(method, url, true);
-  xmlhttp.send(params);
+  xmlhttp.send();
 }));

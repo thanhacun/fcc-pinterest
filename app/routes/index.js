@@ -42,7 +42,7 @@ export default function (app, passport) {
 		.delete(isLoggedIn, clickHandler.resetClicks);
 		
 	app.route('/api/user/images')
-	  .get(isLoggedIn, imageHandler.addOrGetImage);
+	  .get(imageHandler.addOrGetOrDeleteImage);
 	  
   app.route('/*')
     .get(serverRender
