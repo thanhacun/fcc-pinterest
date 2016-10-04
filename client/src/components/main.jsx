@@ -5,7 +5,9 @@ import { getUser, getImages } from '../reducers/reducer';
 import React from 'react';
 import { connect } from 'react-redux';
 import * as actionCreators from '../actions';
+
 import Masonry from 'react-masonry-component';
+import {Button, Badge, Glyphicon} from 'react-bootstrap';
 
 const  masonryOptions = {
   columnWidth: 200,
@@ -13,19 +15,24 @@ const  masonryOptions = {
 };
 
 const UploadForm = React.createClass({
+  getInitialState: function(){
+    return {imgUrl: ''};
+  },
+  handleValueChange: function(ev){
+    this.setState({imgUrl: ev.target.value});
+  },
   render: function(){
     return (
-        <div className="form-inline">
-          <h3>Upload image</h3>
+        <div className="navbar-form navbar-left">
           <div className="form-group">
               <label htmlFor="img-link" className="sr-only">Image URL</label>
-              <input type="text" className="form-control" ref="img_link" id="img-link" name="imgLink" placeholder="Image URL"/>
+              <input type="text" className="form-control" ref="img_link" id="img-link" name="imgLink" placeholder="Image URL" onChange={this.handleValueChange}/>
           </div>
           <div className="form-group">
               <label htmlFor="img-des" className="sr-only">Description</label>
               <input type="text" className="form-control" ref="img_des" id="img-des" name="imgDes" placeholder="Image description"/>
           </div>
-          <button onClick={this.props.handleSubmit} className="btn btn-default">Submit</button>
+          <button onClick={this.props.handleSubmit} className="btn btn-default" disabled={!this.state.imgUrl}>Submit</button>
         </div>
       );
   }
@@ -38,7 +45,9 @@ const ImageItem = React.createClass({
     ev.target.src = placeholderUrl;
   },
   render: function(){
-    const deleteButton = (<button onClick={this.props.delete.bind(null, this.props.image)} className="btn btn-danger">Delete</button>);
+    //const deleteButton = (<div onClick={this.props.delete.bind(null, this.props.image)} className="btn btn-danger btn-sm"><span className="badge">Delete</span></div>);
+    const deleteButton = (<Button bsStyle="danger" onClick={this.props.delete.bind(null, this.props.image)} bsSize="small"><Badge><Glyphicon glyph="remove"/></Badge></Button>);
+    //const deleteButton = (<span onClick={this.props.delete.bind(null, this.props.image)} className="badge btn btn-danger">D</span>);
     //TODO:later
     const likeBadge = (<button className="btn btn-default">L <span className="badge">{this.props.image.like}</span></button>);
     return (
@@ -58,6 +67,7 @@ const ImageItem = React.createClass({
 
 const Main = React.createClass({
   handleSubmit: function() {
+    //TODO check values
     let uploadValues = this.refs.uploadValues;
     this.props.submit(uploadValues.refs.img_link.value, uploadValues.refs.img_des.value);
     //cleanup the form
@@ -97,13 +107,20 @@ const Main = React.createClass({
     return (
       //Using react-masonry-component
       <div className="container">
-        <div className="page-header">
-          <h1>Pinterest like FCC, welcome <span id="display-name">{user.username}</span>!</h1>
-          <div className="form-inline">
-            {loggedIn ? <button className="btn btn-default" onClick={this.toggleAllImage}>{showAll ? "Mine" : "All"}</button>: null}
-            <a className="btn btn-default" href={loggedIn ? "/logout" : "/auth/twitter"}>{loggedIn ? "Logout": "Login"}</a>
+        <nav className="navbar navbar-default">
+          <div className="container-fluid">
+            <div className="navbar-header">
+              <a className="navbar-brand" href="#">Pinterest FCC, welcome <span id="display-name">{user.username}</span>!</a>
+            </div>
+            {loggedIn ? <UploadForm handleSubmit={this.handleSubmit} ref="uploadValues"/> : null}
+            
+            {loggedIn ? <button className="btn btn-default navbar-btn" onClick={this.toggleAllImage}>{showAll ? "Mine" : "All"}</button>: null}
+            <a className="btn btn-default navbar-btn" href={loggedIn ? "/logout" : "/auth/twitter"}>{loggedIn ? "Logout": "Login"}</a>
+              
           </div>
-          {loggedIn ? <UploadForm handleSubmit={this.handleSubmit} ref="uploadValues"/> : null}          
+        </nav>
+        <div className="page-header">
+                    
         </div>
         
         <Masonry className='' elementType={'div'} options={masonryOptions} disableImagesLoaded={false} updateOnEachImageLoad={true}>
