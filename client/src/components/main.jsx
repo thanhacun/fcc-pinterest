@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import * as actionCreators from '../actions';
 
 import Masonry from 'react-masonry-component';
-import {Button, Badge, Glyphicon} from 'react-bootstrap';
+import {Navbar, Nav, NavItem, FormGroup, FormControl, Button, Badge, Glyphicon} from 'react-bootstrap';
 
 const  masonryOptions = {
   columnWidth: 200,
@@ -16,24 +16,28 @@ const  masonryOptions = {
 
 const UploadForm = React.createClass({
   getInitialState: function(){
-    return {imgUrl: ''};
+    return {imgUrl: '', imgDes: ''};
   },
-  handleValueChange: function(ev){
+  imgUrlChange: function(ev){
     this.setState({imgUrl: ev.target.value});
+  },
+  imgDesChange: function(ev){
+    this.setState({imgDes:ev.target.value});
+  },
+  submit: function(){
+    this.props.handleSubmit(this.state.imgUrl, this.state.imgDes);
+    //form reset
+    this.setState({imgUrl: null, imgDes: null});
   },
   render: function(){
     return (
-        <div className="navbar-form navbar-left">
-          <div className="form-group">
-              <label htmlFor="img-link" className="sr-only">Image URL</label>
-              <input type="text" className="form-control" ref="img_link" id="img-link" name="imgLink" placeholder="Image URL" onChange={this.handleValueChange}/>
-          </div>
-          <div className="form-group">
-              <label htmlFor="img-des" className="sr-only">Description</label>
-              <input type="text" className="form-control" ref="img_des" id="img-des" name="imgDes" placeholder="Image description"/>
-          </div>
-          <button onClick={this.props.handleSubmit} className="btn btn-default" disabled={!this.state.imgUrl}>Submit</button>
-        </div>
+        <Navbar.Form pullLeft>
+          <FormGroup>
+            <FormControl type="text" id="img-link" name="imgLink" placeholder="Image URL" onChange={this.imgUrlChange} value={this.state.imgUrl}/>
+            <FormControl type="text" id="img-des" name="imgDes" placeholder="Image description" onChange={this.imgDesChange} value={this.state.imgDes}/>
+            <Button onClick={this.submit} disabled={!this.state.imgUrl || !this.state.imgDes}>Submit</Button>
+          </FormGroup>
+        </Navbar.Form>
       );
   }
 });
@@ -45,11 +49,9 @@ const ImageItem = React.createClass({
     ev.target.src = placeholderUrl;
   },
   render: function(){
-    //const deleteButton = (<div onClick={this.props.delete.bind(null, this.props.image)} className="btn btn-danger btn-sm"><span className="badge">Delete</span></div>);
-    const deleteButton = (<Button bsStyle="danger" onClick={this.props.delete.bind(null, this.props.image)} bsSize="small"><Badge><Glyphicon glyph="remove"/></Badge></Button>);
-    //const deleteButton = (<span onClick={this.props.delete.bind(null, this.props.image)} className="badge btn btn-danger">D</span>);
+    const deleteButton = (<div className="pull-right"><Button bsStyle="danger" onClick={this.props.delete.bind(null, this.props.image)} bsSize="small"><Glyphicon glyph="remove"/></Button></div>);
     //TODO:later
-    const likeBadge = (<button className="btn btn-default">L <span className="badge">{this.props.image.like}</span></button>);
+    const likeBadge = (<Button bsSize="small"><Badge>{this.props.image.like}</Badge></Button>);
     return (
         <div className="grid-item">
           <div className="image">
@@ -57,7 +59,7 @@ const ImageItem = React.createClass({
             <p>{this.props.image.imgDes}</p>
           </div>
           <div className="info">
-            <div>{this.props.image.user}</div>
+            <span className="pull-left">{this.props.image.user}</span>
             {(this.props.loggedIn && this.props.user.username === this.props.image.user) ? deleteButton: null}
           </div>
         </div>
@@ -66,13 +68,8 @@ const ImageItem = React.createClass({
 });
 
 const Main = React.createClass({
-  handleSubmit: function() {
-    //TODO check values
-    let uploadValues = this.refs.uploadValues;
-    this.props.submit(uploadValues.refs.img_link.value, uploadValues.refs.img_des.value);
-    //cleanup the form
-    uploadValues.refs.img_link.value = "";
-    uploadValues.refs.img_des.value = "";
+  handleSubmit: function(imgUrl, imgDes) {
+    this.props.submit(imgUrl, imgDes);
   },
   
   toggleAllImage: function() {
@@ -105,29 +102,24 @@ const Main = React.createClass({
     });
   
     return (
-      //Using react-masonry-component
       <div className="container">
-        <nav className="navbar navbar-default">
-          <div className="container-fluid">
-            <div className="navbar-header">
-              <a className="navbar-brand" href="#">Pinterest FCC, welcome <span id="display-name">{user.username}</span>!</a>
-            </div>
-            {loggedIn ? <UploadForm handleSubmit={this.handleSubmit} ref="uploadValues"/> : null}
-            
-            {loggedIn ? <button className="btn btn-default navbar-btn" onClick={this.toggleAllImage}>{showAll ? "Mine" : "All"}</button>: null}
-            <a className="btn btn-default navbar-btn" href={loggedIn ? "/logout" : "/auth/twitter"}>{loggedIn ? "Logout": "Login"}</a>
-              
-          </div>
-        </nav>
-        <div className="page-header">
-                    
-        </div>
+        <Navbar>
+          <Navbar.Header>
+            <Navbar.Brand>
+              <a href="#">Pinterest FCC, welcome <span id="display-name">{user.username}</span>!</a>
+            </Navbar.Brand>
+          </Navbar.Header>
+          {loggedIn ? <UploadForm handleSubmit={this.handleSubmit} ref="uploadValues"/> : null}
+          
+          <Nav pullRight>
+            {loggedIn ? <NavItem onClick={this.toggleAllImage}>{showAll ? "Mine" : "All"}</NavItem>: null}
+            <NavItem href={loggedIn ? "/logout" : "/auth/twitter"}>{loggedIn ? "Logout": "Login"}</NavItem>
+          </Nav>
+        </Navbar>
         
-        <Masonry className='' elementType={'div'} options={masonryOptions} disableImagesLoaded={false} updateOnEachImageLoad={true}>
+        <Masonry className='grid' elementType={'div'} options={masonryOptions} disableImagesLoaded={false} updateOnEachImageLoad={true}>
           {imagesRender}
         </Masonry>
-        
-        
       </div>
     ); 
   }

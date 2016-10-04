@@ -32,6 +32,10 @@ module.exports = {
   module: {
     loaders: [
       {
+        test: /masonry|imagesloaded|fizzy\-ui\-utils|desandro\-|outlayer|get\-size|doc\-ready|eventie|eventemitter/,
+        loader: 'imports?define=>false&this=>window'
+      },
+      {
         test: /\.jsx?$/,
         loader: 'react-hot',
         exclude: /node_modules/
