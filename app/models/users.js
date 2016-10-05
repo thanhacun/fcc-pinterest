@@ -12,7 +12,7 @@ const User = new Schema({
   nbrClicks: {
     clicks: Number,
   },
-  imgLinks: [{imgUrl: mongoose.SchemaTypes.Url, imgDes: String, like: {type: Number, default: 0}, uploaded: {type: Date, default: Date.now}}]
+  imgLinks: [{imgUrl: mongoose.SchemaTypes.Url, imgDes: String, like: {type:Array, default: []}, uploaded: {type: Date, default: Date.now}}]
 });
 
 export default mongoose.model('User', User);

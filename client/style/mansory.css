@@ -2,7 +2,6 @@
 
 .grid {
   margin: 0px;
-  width: 1000px;
 }
 
 /* clearfix */
@@ -15,13 +14,19 @@
 /* ---- grid-item ---- */
 
 .grid-item {
-  width: 190px;
+  /*--- Making gutter replace default padding value of bs col- classes ---*/
+   padding-left: 5px !important;
+   padding-right: 5px !important;
+}
+
+.grid-item-content {
   float: left;
   background: #FFF;
   padding: 5px;
   box-shadow: 2px 2px 5px;
   text-align: center;
-  margin-bottom: 10px
+  margin-bottom: 10px;
+ 
 }
 
 .grid-item--width2 { width: 320px; }
@@ -34,7 +39,7 @@
 
 /* ---- image --- */
 .image img{
-    width: 180px;
+    width: 96%;
     vertical-align: middle;
     border: 0;
 }

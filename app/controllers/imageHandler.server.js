@@ -1,9 +1,11 @@
 import Users from '../models/users.js';
 
 function ImageHandler(){
-    this.addOrGetOrDeleteImage = (req, res) => {
+    this.addOrGetOrDeleteImage = (req, res, cb) => {
         //DO NOT Forget break
-        switch (req.query.action) {
+        //using (null, null, cb) to request without using req, res
+        const action = (!req) ? 'nothing' : req.query.action;
+        switch (action) {
             case 'upload':
                 //user upload an image url
                 //TODO: only when login
@@ -24,12 +26,20 @@ function ImageHandler(){
                         if (error) {throw error;}
                         res.json(result.imgLinks);
                     });
-                    break;
+                break;
+            case 'test':
+                Users.findOne({'twitter.username': 'thanhacun'})
+                    .populate('imgLinks')
+                    .exec((err, images) => {
+                        if(err) {throw err;}
+                        res.json(images);
+                    });
+                break;
             default:
                 //update images list
+                //TODO: use mongoose sort
                 Users.find({}, (err, results) => {
                     if (err) { throw err; }
-                    //let initialState = {};
                     const images = results.reduce((pre, cur) => {
                       return (pre.concat(
                           //NOTE:need to use toObject to convert mongoose objects into plain objects 
@@ -37,10 +47,25 @@ function ImageHandler(){
                         ));
                     }, [])
                     .sort((e1, e2) => (e1.uploaded > e2.uploaded));
-                    res.json(images);
+                    if (!req){
+                        cb(images);
+                    } else {
+                        res.json(images);
+                    }
+                    
                 });
         }
         
+    };
+    this.likeToggle = function(req, res) {
+        //Using post method
+        const image = JSON.parse(req.query.image);
+        Users.update({'twitter.username': image.user, 'imgLinks._id': image._id},
+        {$set :{'imgLinks.$.like': image.like}},
+        (error, result) => {
+           if (error) {throw error;}
+           res.json(result);
+        });
     };
 }
 

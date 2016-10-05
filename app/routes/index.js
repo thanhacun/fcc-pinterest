@@ -42,7 +42,8 @@ export default function (app, passport) {
 		.delete(isLoggedIn, clickHandler.resetClicks);
 		
 	app.route('/api/user/images')
-	  .get(imageHandler.addOrGetOrDeleteImage);
+	  .get(imageHandler.addOrGetOrDeleteImage)
+	  .post(imageHandler.likeToggle);
 	  
   app.route('/*')
     .get(serverRender

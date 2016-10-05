@@ -47,6 +47,9 @@ const originalReducer = (state = initState, action) => {
     case 'DELETE_IMAGE':
       console.log('User delete an image link!');
       return {...state};
+    case 'LIKE_TOGGLE':
+      console.log('Like toggle an image');
+      return {...state}
     default:
       return state;
   }
@@ -58,3 +61,4 @@ export const getUser = state => state.user || { username: 'guest' };
 export const getClicks = state => state.clicks || '0';
 export const getLoggedIn = state => state.loggedIn;
 export const getImages = state => state.images;
+export const getShowAll = state => state.showAll;

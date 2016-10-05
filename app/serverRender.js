@@ -7,8 +7,8 @@ import { createRoutes } from '../client/src/routes.jsx';
 import reducers from '../client/src/reducers';
 import Users from './models/users';
 
-//import ImageHandler from './controllers/imageHandler.server.js';
-//const imageHandler = new ImageHandler();
+import ImageHandler from './controllers/imageHandler.server.js';
+const imageHandler = new ImageHandler();
 
 const renderHelper = (res, location, routes, store) => {
   match({ routes, location }, (error, redirectLocation, renderProps) => {
@@ -48,26 +48,16 @@ const renderHelper = (res, location, routes, store) => {
 };
 
 export default (req, res) => {
-  //TODO: DRY
-  Users.find({}, (err, results) => {
-    if (err) { throw err; }
+  imageHandler.addOrGetOrDeleteImage(null, null, images => {
     let initialState = {};
-    const images = results.reduce((pre, cur) => {
-      return (pre.concat(
-          //NOTE:need to use toObject to convert mongoose objects into plain objects 
-          cur.imgLinks.map(imgLink => Object.assign({}, {user:cur.twitter.username}, imgLink.toObject()))
-        ));
-    }, [])
-    .sort((e1, e2) => (e1.uploaded > e2.uploaded));
     if (req.isAuthenticated()) {
-      initialState = {originalState: {loggedIn: true, showAll: false, user: req.user.twitter, images }, testState: {name: 'THANH'}};
+      initialState = {originalState: {loggedIn: true, showAll: true, user: req.user.twitter, images }, testState: {name: 'THANH'}};
     } else {
       initialState = {originalState: {loggedIn: false, showAll: true, images}, testState: {name: 'THANH'}};
     }
     const store = createStore(reducers, initialState);
     const routes = createRoutes(store);
     return renderHelper(res, req.url, routes, store);
-    
   });
   
   return null;
