@@ -56,8 +56,8 @@ const ImageItem = React.createClass({
     ev.target.src = placeholderUrl;
   },
   render: function(){
+    console.log(this.state.like);
     const deleteButton = (<span className="pull-right"><Button bsStyle="danger" onClick={this.props.delete.bind(null, this.props.image)} bsSize="small"><Glyphicon glyph="remove"/></Button></span>);
-    //TODO:later
     const likeBadge = (<span className="pull-right"><Button disabled={!this.props.loggedIn} onClick={this.props.likeToggle.bind(null, this.props.image, this.props.user.username, this.state.like)} bsStyle={this.state.like ? "success" : "default"} bsSize="small"><Badge>{this.props.image.like.length}</Badge></Button></span>);
     return (
         <div className="grid-item col-xs-4">
@@ -147,8 +147,6 @@ Main.propTypes = {
   images: React.PropTypes.array,
   loggedIn: React.PropTypes.bool,
   showAll: React.PropTypes.bool,
-  //submit: React.PropTypes.function,
-  //toggle: React.PropTypes.function,
 };
 
 function mapStateToProps(state) {

@@ -19,3 +19,6 @@ data/
 
 # logs
 *.log
+
+# cloud9
+.c9
