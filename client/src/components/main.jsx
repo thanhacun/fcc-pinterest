@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import * as actionCreators from '../actions';
 
 import Masonry from 'react-masonry-component';
-import {Navbar, Nav, NavItem, FormGroup, FormControl, Button, Badge, Glyphicon} from 'react-bootstrap';
+import {Navbar, Nav, NavItem, FormGroup, FormControl, Button, Glyphicon, Image} from 'react-bootstrap';
 
 const  masonryOptions = {
   columnWidth: '.grid-item',
@@ -44,26 +44,25 @@ const UploadForm = React.createClass({
 });
 
 const ImageItem = React.createClass({
-  getInitialState: function(){
-    const user = this.props.user;
-    return {
-      like: !(this.props.image.like.indexOf(user.username) == -1)
-    };
-  },
   defaultImage: function(ev){
-    const placeholderUrl = 'http://placehold.it/200?text=Broken image!';
+    const placeholderUrl = 'http://placehold.it/360x240?text=Broken image!';
     console.log('Broken image detected!', ev.target.src);
     ev.target.src = placeholderUrl;
   },
   render: function(){
-    console.log(this.state.like);
-    const deleteButton = (<span className="pull-right"><Button bsStyle="danger" onClick={this.props.delete.bind(null, this.props.image)} bsSize="small"><Glyphicon glyph="remove"/></Button></span>);
-    const likeBadge = (<span className="pull-right"><Button disabled={!this.props.loggedIn} onClick={this.props.likeToggle.bind(null, this.props.image, this.props.user.username, this.state.like)} bsStyle={this.state.like ? "success" : "default"} bsSize="small"><Badge>{this.props.image.like.length}</Badge></Button></span>);
+    const disLikeStatus = this.props.image.like.indexOf(this.props.user.username) === -1;
+    const deleteButton = (<span className="pull-right"><Button onClick={this.props.delete.bind(null, this.props.image)}><Glyphicon glyph="remove" className="text-danger"/></Button></span>);
+    const likeBadge = (<span className="pull-right">
+                          <Button disabled={!this.props.loggedIn} onClick={this.props.likeToggle.bind(null, this.props.image, this.props.user.username, !disLikeStatus)} >
+                            <Glyphicon glyph={disLikeStatus ? "star-empty" : "star"}/><span> {this.props.image.like.length}</span>
+                          </Button>
+                          
+                        </span>);
     return (
         <div className="grid-item col-xs-4">
           <div className="grid-item-content">
             <div className="image">
-              <img src={this.props.image.imgUrl} onError={this.defaultImage}/>
+              <Image responsive src={this.props.image.imgUrl} onError={this.defaultImage}/>
               <p>{this.props.image.imgDes}</p>
             </div>
             <div className="info">
@@ -93,15 +92,13 @@ const Main = React.createClass({
   
   handleLikeToggle: function(image, likeUser, like){
     console.log('User', likeUser, !like ? 'like': 'dislike', 'the image', image.imgDes);
-    if (!like) {
-      //user like the image
+    const userIndex = image.like.indexOf(likeUser);
+    if (userIndex === -1) {
       image.like.push(likeUser);
     } else {
-      //user dislike the image
-      image.like.splice(image.like.findIndex(username => {
-        return username == likeUser;
-      }),1);
+      image.like.splice(userIndex, 1);
     }
+   
     this.props.like_toggle(image);
   },
   
