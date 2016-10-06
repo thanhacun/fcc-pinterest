@@ -22,3 +22,4 @@ data/
 
 # cloud9
 .c9
+docker-compose.yml

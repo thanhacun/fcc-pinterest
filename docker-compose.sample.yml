@@ -3,8 +3,8 @@ c9_container:
     container_name: pinterest_c9
     #TODO: name by variable using ${pwd}
     ports:
-        - "8181:8181"
-        - "8888:8080"
+        - "3838:8181"
+        - "3880:8080"
         # the second port is for exposing container port for running service
     volumes:
         - ${pwd}:/workspace
