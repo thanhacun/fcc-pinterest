@@ -49,17 +49,15 @@ const renderHelper = (res, location, routes, store) => {
 };
 
 export default (req, res) => {
-  imageHandler.addOrGetOrDeleteImage(null, null, images => {
-    let initialState = {};
-    if (req.isAuthenticated()) {
-      initialState = {originalState: {loggedIn: true, showAll: true, user: req.user.twitter, images }, testState: {name: 'THANH'}};
-    } else {
-      initialState = {originalState: {loggedIn: false, showAll: true, images}, testState: {name: 'THANH'}};
-    }
-    const store = createStore(reducers, initialState);
-    const routes = createRoutes(store);
-    return renderHelper(res, req.url, routes, store);
-  });
+  let initialState = {};
+  if (req.isAuthenticated()) {
+    initialState = {originalState: {loggedIn: true, showAll: true, user: req.user.twitter, serverRender: true, images: [] }, testState: {name: 'THANH'}};
+  } else {
+    initialState = {originalState: {loggedIn: false, showAll: true, serverRender: true, images: []}, testState: {name: 'THANH'}};
+  }
+  const store = createStore(reducers, initialState);
+  const routes = createRoutes(store);
+  return renderHelper(res, req.url, routes, store);
   
-  return null;
+  //return null;
 };

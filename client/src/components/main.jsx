@@ -51,7 +51,7 @@ const ImageItem = React.createClass({
     return {brokenImage: false, imgSrc: this.props.image.imgUrl};
   },
   defaultImage: function(ev){
-    const placeholderUrl = 'http://placehold.it/360x240?text=Broken image!';
+    const placeholderUrl = 'https://cdn.hyperdev.com/us-east-1%3A60e6615e-7d9e-47ac-903b-3b4b47372e42%2Fplaceholder.png';
     console.log('Broken image detected!', ev.target.src);
     //ev.target.src = placeholderUrl;
     //disable like button
@@ -70,7 +70,7 @@ const ImageItem = React.createClass({
         <div className="grid-item col-sm-3 col-xs-4">
           <div className="grid-item-content">
             <div className="image">
-              <Image responsive thumbnail src={this.state.imgSrc} onError={this.defaultImage}/>
+              <Image responsive thumbnail src={this.state.imgSrc} onError={this.defaultImage} />
               <p>{this.props.image.imgDes}</p>
             </div>
             <div className="info">
@@ -85,12 +85,17 @@ const ImageItem = React.createClass({
 });
 
 const Main = React.createClass({
+  componentDidMount: function(){
+    if (this.props.serverRender) {
+      this.props.get_all_images(false);
+    }
+  },
   handleSubmit: function(imgUrl, imgDes) {
     this.props.submit(imgUrl, imgDes);
   },
   
   toggleAllImage: function() {
-    this.props.toggle();
+    this.props.get_all_images(true);
   },
   
   handleDeleteImage: function(image) {
@@ -99,6 +104,7 @@ const Main = React.createClass({
   },
   
   handleLikeToggle: function(image, likeUser, like){
+    console.log(this.refs);
     console.log('User', likeUser, !like ? 'like': 'dislike', 'the image', image.imgDes);
     const userIndex = image.like.indexOf(likeUser);
     if (userIndex === -1) {
@@ -166,6 +172,7 @@ function mapStateToProps(state) {
     loggedIn: getLoggedIn(state.originalState),
     showAll: getShowAll(state.originalState),
     loading: state.originalState.loading,
+    serverRender: state.originalState.serverRender
   };
 }
 

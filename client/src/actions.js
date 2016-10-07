@@ -85,4 +85,12 @@ export const like_toggle = (image) => (dispatch) => {
   });
 };
 
+export const get_all_images = (toggleAll) => (dispatch) => {
+  if (toggleAll) {dispatch({type: 'TOGGLE_ALL_IMAGE'});}
+  dispatch({type: 'LOADING', what: 'Get all images'});
+  ajax('GET', '/api/user/images').then(data => {
+    dispatch(getImage(data));
+  });
+};
+
 
