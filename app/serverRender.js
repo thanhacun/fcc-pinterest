@@ -30,6 +30,7 @@ const renderHelper = (res, location, routes, store) => {
           <title>Pinterest alike FCC - Clementine-React-Redux</title>
           <link rel="stylesheet" type="text/css" href="/static/style.css" media="all">
           <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css">
+          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
         </head>
         <body>
           <div id="appView">${html}</div>

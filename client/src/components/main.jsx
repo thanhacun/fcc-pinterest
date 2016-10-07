@@ -9,7 +9,8 @@ import * as actionCreators from '../actions';
 import Masonry from 'react-masonry-component';
 import {Navbar, Nav, NavItem, FormGroup, FormControl, Button, Glyphicon, Image, Thumbnail} from 'react-bootstrap';
 
-import Loader from 'react-loader';
+import Loader from 'react-loader-advanced';
+import FontAwesome from 'react-fontawesome';
 
 const  masonryOptions = {
   columnWidth: '.grid-item',
@@ -122,9 +123,10 @@ const Main = React.createClass({
     });
     
     if(this.props.loading){ console.log(this.props.loading); }
+    const spinner = (<FontAwesome name="spinner" size="3x" spin />);
     
     return (
-      <Loader loaded={!this.props.loading}>
+      <Loader show={!!this.props.loading} message={spinner}>
         <div className="container">
           <Navbar fluid={true}>
             <Navbar.Header>
@@ -143,6 +145,7 @@ const Main = React.createClass({
             <Masonry className='grid' elementType={'div'} options={masonryOptions} disableImagesLoaded={false} updateOnEachImageLoad={true}>
               {imagesRender}
             </Masonry>
+            
         </div>
       </Loader>
       ); 
