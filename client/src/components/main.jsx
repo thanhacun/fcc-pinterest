@@ -7,7 +7,9 @@ import { connect } from 'react-redux';
 import * as actionCreators from '../actions';
 
 import Masonry from 'react-masonry-component';
-import {Navbar, Nav, NavItem, FormGroup, FormControl, Button, Glyphicon, Image} from 'react-bootstrap';
+import {Navbar, Nav, NavItem, FormGroup, FormControl, Button, Glyphicon, Image, Thumbnail} from 'react-bootstrap';
+
+import Loader from 'react-loader';
 
 const  masonryOptions = {
   columnWidth: '.grid-item',
@@ -44,25 +46,30 @@ const UploadForm = React.createClass({
 });
 
 const ImageItem = React.createClass({
+  getInitialState: function(){
+    return {brokenImage: false, imgSrc: this.props.image.imgUrl};
+  },
   defaultImage: function(ev){
     const placeholderUrl = 'http://placehold.it/360x240?text=Broken image!';
     console.log('Broken image detected!', ev.target.src);
-    ev.target.src = placeholderUrl;
+    //ev.target.src = placeholderUrl;
+    //disable like button
+    this.setState({brokenImage: true, imgSrc: placeholderUrl});
   },
   render: function(){
     const disLikeStatus = this.props.image.like.indexOf(this.props.user.username) === -1;
     const deleteButton = (<span className="pull-right"><Button onClick={this.props.delete.bind(null, this.props.image)}><Glyphicon glyph="remove" className="text-danger"/></Button></span>);
     const likeBadge = (<span className="pull-right">
-                          <Button disabled={!this.props.loggedIn} onClick={this.props.likeToggle.bind(null, this.props.image, this.props.user.username, !disLikeStatus)} >
+                          <Button ref="likeBadge" disabled={!this.props.loggedIn || this.state.brokenImage} onClick={this.props.likeToggle.bind(null, this.props.image, this.props.user.username, !disLikeStatus)} >
                             <Glyphicon glyph={disLikeStatus ? "star-empty" : "star"}/><span> {this.props.image.like.length}</span>
                           </Button>
                           
                         </span>);
     return (
-        <div className="grid-item col-xs-4">
+        <div className="grid-item col-sm-3 col-xs-4">
           <div className="grid-item-content">
             <div className="image">
-              <Image responsive src={this.props.image.imgUrl} onError={this.defaultImage}/>
+              <Image responsive thumbnail src={this.state.imgSrc} onError={this.defaultImage}/>
               <p>{this.props.image.imgDes}</p>
             </div>
             <div className="info">
@@ -108,34 +115,37 @@ const Main = React.createClass({
     var images = this.props.images;
     var loggedIn = this.props.loggedIn;
     var showAll = this.props.showAll;
-    //var deleteImage = this.handleDeleteImage;
     var imagesRender = images.filter(function(image) {
       return showAll || image.user === user.username;
     }).map(function(image, key) {
       return ( <ImageItem image={image} delete={self.handleDeleteImage} loggedIn={loggedIn}  likeToggle={self.handleLikeToggle} user={user} key={"item-" + key} /> );
     });
-  
+    
+    if(this.props.loading){ console.log(this.props.loading); }
+    
     return (
-      <div className="container">
-        <Navbar fluid={true}>
-          <Navbar.Header>
-            <Navbar.Brand>
-              <a href="#">Pinterest FCC, welcome <span id="display-name">{user.username}</span>!</a>
-            </Navbar.Brand>
-          </Navbar.Header>
-          {loggedIn ? <UploadForm handleSubmit={this.handleSubmit} ref="uploadValues"/> : null}
+      <Loader loaded={!this.props.loading}>
+        <div className="container">
+          <Navbar fluid={true}>
+            <Navbar.Header>
+              <Navbar.Brand>
+                <a href="#">Welcome <span id="display-name">{user.username}</span>!</a>
+              </Navbar.Brand>
+            </Navbar.Header>
+            {loggedIn ? <UploadForm handleSubmit={this.handleSubmit} ref="uploadValues"/> : null}
+            
+            <Nav pullRight>
+              {loggedIn ? <NavItem onClick={this.toggleAllImage}>{showAll ? "Mine" : "All"}</NavItem>: null}
+              <NavItem href={loggedIn ? "/logout" : "/auth/twitter"}>{loggedIn ? "Logout": "Login"}</NavItem>
+            </Nav>
+          </Navbar>
           
-          <Nav pullRight>
-            {loggedIn ? <NavItem onClick={this.toggleAllImage}>{showAll ? "Mine" : "All"}</NavItem>: null}
-            <NavItem href={loggedIn ? "/logout" : "/auth/twitter"}>{loggedIn ? "Logout": "Login"}</NavItem>
-          </Nav>
-        </Navbar>
-        
-          <Masonry className='grid' elementType={'div'} options={masonryOptions} disableImagesLoaded={false} updateOnEachImageLoad={true}>
-            {imagesRender}
-          </Masonry>
-      </div>
-    ); 
+            <Masonry className='grid' elementType={'div'} options={masonryOptions} disableImagesLoaded={false} updateOnEachImageLoad={true}>
+              {imagesRender}
+            </Masonry>
+        </div>
+      </Loader>
+      ); 
   }
 });
 
@@ -151,7 +161,8 @@ function mapStateToProps(state) {
     user: getUser(state.originalState),
     images: getImages(state.originalState),
     loggedIn: getLoggedIn(state.originalState),
-    showAll: getShowAll(state.originalState)
+    showAll: getShowAll(state.originalState),
+    loading: state.originalState.loading,
   };
 }
 

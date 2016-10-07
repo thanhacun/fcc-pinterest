@@ -18,6 +18,7 @@ function setImages (state, images) {
   return {
     ...state,
     images,
+    loading: undefined
   };
 }
 

@@ -9,10 +9,6 @@ function flip_name(name) {
   return {type: 'FLIP_NAME', name: name};
 }
 
-function setImage(url, des) {
-  return { type: 'UPLOAD', url, des };
-}
-
 function getImage(images) {
   return {type: 'SET_IMAGES', images};
 }
@@ -50,11 +46,9 @@ export const thanh_click = (name) => (dispatch) => {
 };
 
 export const submit = (url, des) => (dispatch) => {
-  //dispatch(setImage(url, des));
-  dispatch({ type: 'UPLOAD', url, des });
+  dispatch({ type: 'LOADING', what: 'Uploading an image' });
   ajax('GET', '/api/user/images?action=upload&imgLink=' + url + '&imgDes=' +  des).then(() =>{
     ajax('GET', '/api/user/images').then(data => {
-      //dispatch({type: 'SET_IMAGES', images: data});
       dispatch(getImage(data));
     });
   });
@@ -62,9 +56,9 @@ export const submit = (url, des) => (dispatch) => {
 
 export const toggle = () => (dispatch) => {
   dispatch({type: 'TOGGLE_ALL_IMAGE'});
+  dispatch({type: 'LOADING', what: 'Getting all images'});
   ajax('GET', '/api/user/images')
   .then(data => {
-    //dispatch({type: 'SET_IMAGES', images: data});
     dispatch(getImage(data));
   })
   .catch(error => {
@@ -74,20 +68,18 @@ export const toggle = () => (dispatch) => {
 };
 
 export const delete_image = (image) => (dispatch) => {
-  dispatch({type: 'DELETE_IMAGE'});
+  dispatch({type: 'LOADING', what: 'Deleting an image' });
   ajax('GET', '/api/user/images?action=delete&username=' + image.user + '&imgId=' + image._id).then(() => {
     ajax('GET', '/api/user/images').then(data => {
-      //dispatch({type: 'SET_IMAGES', images: data});
       dispatch(getImage(data));
     });
   });
 };
 
 export const like_toggle = (image) => (dispatch) => {
-  dispatch({type: 'LIKE_TOGGLE'});
+  dispatch({type: 'LOADING', what: 'Like/Dislike an image'});
   ajax('POST', '/api/user/images?action=like&image=' + JSON.stringify(image)).then(() =>{
     ajax('GET', '/api/user/images').then(data => {
-      //dispatch({type: 'SET_IMAGES', images: data});
       dispatch(getImage(data));
     });
   });
