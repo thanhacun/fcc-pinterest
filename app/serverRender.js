@@ -51,7 +51,7 @@ const renderHelper = (res, location, routes, store) => {
 export default (req, res) => {
   let initialState = {};
   if (req.isAuthenticated()) {
-    initialState = {originalState: {loggedIn: true, showAll: true, user: req.user.twitter, serverRender: true, images: [] }, testState: {name: 'THANH'}};
+    initialState = {originalState: {loggedIn: true, showAll: false, user: req.user.twitter, serverRender: true, images: [] }, testState: {name: 'THANH'}};
   } else {
     initialState = {originalState: {loggedIn: false, showAll: true, serverRender: true, images: []}, testState: {name: 'THANH'}};
   }

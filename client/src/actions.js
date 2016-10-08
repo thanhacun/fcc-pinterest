@@ -54,19 +54,6 @@ export const submit = (url, des) => (dispatch) => {
   });
 };
 
-export const toggle = () => (dispatch) => {
-  dispatch({type: 'TOGGLE_ALL_IMAGE'});
-  dispatch({type: 'LOADING', what: 'Getting all images'});
-  ajax('GET', '/api/user/images')
-  .then(data => {
-    dispatch(getImage(data));
-  })
-  .catch(error => {
-    console.log(error);
-    throw error;
-  });
-};
-
 export const delete_image = (image) => (dispatch) => {
   dispatch({type: 'LOADING', what: 'Deleting an image' });
   ajax('GET', '/api/user/images?action=delete&username=' + image.user + '&imgId=' + image._id).then(() => {

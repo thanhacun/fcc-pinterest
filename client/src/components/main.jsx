@@ -104,7 +104,6 @@ const Main = React.createClass({
   },
   
   handleLikeToggle: function(image, likeUser, like){
-    console.log(this.refs);
     console.log('User', likeUser, !like ? 'like': 'dislike', 'the image', image.imgDes);
     const userIndex = image.like.indexOf(likeUser);
     if (userIndex === -1) {
@@ -122,10 +121,10 @@ const Main = React.createClass({
     var images = this.props.images;
     var loggedIn = this.props.loggedIn;
     var showAll = this.props.showAll;
-    var imagesRender = images.filter(function(image) {
-      return showAll || image.user === user.username;
-    }).map(function(image, key) {
-      return ( <ImageItem image={image} delete={self.handleDeleteImage} loggedIn={loggedIn}  likeToggle={self.handleLikeToggle} user={user} key={"item-" + key} /> );
+    var imagesRender = images.map(function(image, key) {
+      if (showAll || user.username === image.user){
+        return ( <ImageItem image={image} delete={self.handleDeleteImage} loggedIn={loggedIn}  likeToggle={self.handleLikeToggle} user={user} key={"item-" + key} /> );
+      }
     });
     
     if(this.props.loading){ console.log(this.props.loading); }

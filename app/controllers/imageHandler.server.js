@@ -8,7 +8,7 @@ function ImageHandler(){
         switch (action) {
             case 'upload':
                 //user upload an image url
-                //TODO: only when login
+                //if (!req.isAuthenticated()) { res.redirect('/login'); }
                 const newImage = {imgUrl: req.query.imgLink, imgDes: req.query.imgDes};
                 Users.findOneAndUpdate({'twitter.id': req.user.twitter.id},
                     { $push : {'imgLinks': newImage}})
@@ -19,7 +19,7 @@ function ImageHandler(){
                 break;
             case 'delete':
                 //user delete an image
-                //TODO: only when login
+                //if (!req.isAuthenticated()) { res.redirect('/login'); }
                 Users.findOneAndUpdate({'twitter.username': req.query.username}, 
                     {$pull: {imgLinks: {_id: req.query.imgId}}},
                     (error, result) => {
@@ -37,22 +37,18 @@ function ImageHandler(){
                 break;
             default:
                 //update images list
-                //TODO: use mongoose sort
-                Users.find({}, (err, results) => {
-                    if (err) { throw err; }
-                    const images = results.reduce((pre, cur) => {
+                Users.find({}).sort('-uploaded').exec((err, results) => {
+                   if (err) { throw err; }
+                   const images = results.reduce((pre, cur) => {
                       return (pre.concat(
-                          //NOTE:need to use toObject to convert mongoose objects into plain objects 
-                          cur.imgLinks.map(imgLink => Object.assign({}, {user:cur.twitter.username}, imgLink.toObject()))
-                        ));
-                    }, [])
-                    .sort((e1, e2) => (e1.uploaded > e2.uploaded));
-                    if (!req){
-                        cb(images);
-                    } else {
-                        res.json(images);
-                    }
-                    
+                         cur.imgLinks.map(imgLink => Object.assign({}, {user: cur.twitter.username}, imgLink.toObject()))
+                       )); 
+                   }, []);
+                   if (!req) {
+                       cb(images);
+                   } else {
+                       res.json(images);
+                   }
                 });
         }
         

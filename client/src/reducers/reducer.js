@@ -18,7 +18,8 @@ function setImages (state, images) {
   return {
     ...state,
     images,
-    loading: undefined
+    loading: undefined,
+    serverRender:false
   };
 }
 
@@ -50,7 +51,7 @@ const originalReducer = (state = initState, action) => {
       return {...state};
     case 'LIKE_TOGGLE':
       console.log('Like toggle an image');
-      return {...state}
+      return {...state};
     default:
       return state;
   }
