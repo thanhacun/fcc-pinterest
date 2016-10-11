@@ -45,39 +45,45 @@ export const thanh_click = (name) => (dispatch) => {
   dispatch(flip_name(name));
 };
 
-export const submit = (url, des) => (dispatch) => {
+export const submit = (url, des, showWhat) => (dispatch) => {
   dispatch({ type: 'LOADING', what: 'Uploading an image' });
   ajax('GET', '/api/user/images?action=upload&imgLink=' + url + '&imgDes=' +  des).then(() =>{
-    ajax('GET', '/api/user/images').then(data => {
+    ajax('GET', '/api/user/images?showMine=' + (showWhat === 'mine')).then(data => {
       dispatch(getImage(data));
     });
   });
 };
 
-export const delete_image = (image) => (dispatch) => {
+export const delete_image = (image, showWhat) => (dispatch) => {
   dispatch({type: 'LOADING', what: 'Deleting an image' });
   ajax('GET', '/api/user/images?action=delete&username=' + image.user + '&imgId=' + image._id).then(() => {
-    ajax('GET', '/api/user/images').then(data => {
+    ajax('GET', '/api/user/images?showMine=' + (showWhat === 'mine')).then(data => {
       dispatch(getImage(data));
     });
   });
 };
 
-export const like_toggle = (image) => (dispatch) => {
+export const like_toggle = (image, showWhat) => (dispatch) => {
   dispatch({type: 'LOADING', what: 'Like/Dislike an image'});
   ajax('POST', '/api/user/images?action=like&image=' + JSON.stringify(image)).then(() =>{
-    ajax('GET', '/api/user/images').then(data => {
+    ajax('GET', '/api/user/images?showMine=' + (showWhat === 'mine')).then(data => {
       dispatch(getImage(data));
     });
   });
 };
 
-export const get_all_images = (toggleAll) => (dispatch) => {
-  if (toggleAll) {dispatch({type: 'TOGGLE_ALL_IMAGE'});}
+export const get_all_images = (showWhat) => (dispatch) => {
+  const ajaxStr = (showWhat === 'mine') ? '/api/user/images?showMine=true' : '/api/user/images';
+  if (showWhat) {dispatch({type: 'TOGGLE_ALL_IMAGE'});}
   dispatch({type: 'LOADING', what: 'Get all images'});
-  ajax('GET', '/api/user/images').then(data => {
+  ajax('GET', ajaxStr).then(data => {
     dispatch(getImage(data));
   });
+};
+
+export const reload_images = (images) => (dispatch) => {
+  dispatch({type: 'LOADING', what: 'Reload images for local render'});
+  dispatch({type: 'RELOAD_IMAGES', images});
 };
 
 

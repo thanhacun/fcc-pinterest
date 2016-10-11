@@ -1,7 +1,7 @@
 import Users from '../models/users.js';
 
 function ImageHandler(){
-    this.addOrGetOrDeleteImage = (req, res, cb) => {
+    this.addOrGetOrDeleteImage = (req, res) => {
         //DO NOT Forget break
         //using (null, null, cb) to request without using req, res
         const action = (!req) ? 'nothing' : req.query.action;
@@ -19,7 +19,6 @@ function ImageHandler(){
                 break;
             case 'delete':
                 //user delete an image
-                //if (!req.isAuthenticated()) { res.redirect('/login'); }
                 Users.findOneAndUpdate({'twitter.username': req.query.username}, 
                     {$pull: {imgLinks: {_id: req.query.imgId}}},
                     (error, result) => {
@@ -37,18 +36,15 @@ function ImageHandler(){
                 break;
             default:
                 //update images list
-                Users.find({}).sort('-uploaded').exec((err, results) => {
+                const findCondition = (req.query.showMine === 'true') ? {'twitter.id' : req.user.twitter.id} : {};
+                Users.find(findCondition).sort('-uploaded').exec((err, results) => {
                    if (err) { throw err; }
                    const images = results.reduce((pre, cur) => {
                       return (pre.concat(
                          cur.imgLinks.map(imgLink => Object.assign({}, {user: cur.twitter.username}, imgLink.toObject()))
                        )); 
                    }, []);
-                   if (!req) {
-                       cb(images);
-                   } else {
-                       res.json(images);
-                   }
+                   res.json(images);
                 });
         }
         

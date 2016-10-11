@@ -52,6 +52,9 @@ const originalReducer = (state = initState, action) => {
     case 'LIKE_TOGGLE':
       console.log('Like toggle an image');
       return {...state};
+    case 'RELOAD_IMAGES':
+      console.log('Reload images');
+      return {...state, images: action.images, serverRender: false, loading: undefined};
     default:
       return state;
   }

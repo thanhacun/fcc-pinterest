@@ -49,15 +49,25 @@ const renderHelper = (res, location, routes, store) => {
 };
 
 export default (req, res) => {
-  let initialState = {};
-  if (req.isAuthenticated()) {
-    initialState = {originalState: {loggedIn: true, showAll: false, user: req.user.twitter, serverRender: true, images: [] }, testState: {name: 'THANH'}};
-  } else {
-    initialState = {originalState: {loggedIn: false, showAll: true, serverRender: true, images: []}, testState: {name: 'THANH'}};
-  }
-  const store = createStore(reducers, initialState);
-  const routes = createRoutes(store);
-  return renderHelper(res, req.url, routes, store);
+  //TODO: DRY
+  const findCondition = req.isAuthenticated() ? {'twitter.id' : req.user.twitter.id} : {};
+  Users.find(findCondition).sort('-uploaded').exec((err, results) => {
+     if (err) { throw err; }
+     const images = results.reduce((pre, cur) => {
+        return (pre.concat(
+           cur.imgLinks.map(imgLink => Object.assign({}, {user: cur.twitter.username}, imgLink.toObject()))
+         )); 
+     }, []);
+     let initialState = {};
+    if (req.isAuthenticated()) {
+      initialState = {originalState: {loggedIn: true, showAll: false, user: req.user.twitter, serverRender: true, images}, testState: {name: 'THANH'}};
+    } else {
+      initialState = {originalState: {loggedIn: false, showAll: true, serverRender: true, images}, testState: {name: 'THANH'}};
+    }
+    const store = createStore(reducers, initialState);
+    const routes = createRoutes(store);
+    return renderHelper(res, req.url, routes, store);
+  });
+  return null;
   
-  //return null;
 };
